@@ -74,10 +74,10 @@ elif processor_name == 'ARM':
 	smart_epilog = re.compile(r"pop \{R4,PC\}")
 
 else:
-	print "[define_code_functions.py] UNSUPPORTED PROCESSOR. Processor = %s is unsupported. Exiting." % processor_name
+	print ("[define_code_functions.py] UNSUPPORTED PROCESSOR. Processor = %s is unsupported. Exiting." % processor_name)
 	raise NotImplementedError('Unsupported Processor Type.')
 
-print "[define_code_functions.py] Processor = %s -- Reg Expressions Selected. Proceeding." % processor_name
+print ("[define_code_functions.py] Processor = %s -- Reg Expressions Selected. Proceeding." % processor_name)
 ############################################################
 
 start_addr = ida_kernwin.ask_addr(ida_ida.inf_get_min_ea(), "Please enter the starting address for the data to be defined.")
@@ -92,30 +92,30 @@ if ((start_addr is not None and end_addr is not None) and (start_addr != BADADDR
 			curr_addr += 1
 	if (do_make_unk != -1):
 		curr_addr = start_addr
-		print "[make_code_functions.py] Running script to define code and functions on 0x%x to 0x%x" % (start_addr, end_addr)
+		print ("[make_code_functions.py] Running script to define code and functions on 0x%x to 0x%x" % (start_addr, end_addr))
 		while (curr_addr < end_addr):
 			next_unexplored = ida_search.find_unknown(curr_addr, idaapi.SEARCH_DOWN)
-			#print "0x%x" % next_unexplored
+			#print ("0x%x" % next_unexplored)
 			idc.create_insn(next_unexplored)		# We don't care whether it succeeds or fails so not storing retval
 			curr_addr = next_unexplored
 
 		# Finished attempting to make all unexplored bytes into code
 		# Now, attempt to create functions of all code not currently in a function
-		print "[make_code_functions.py] Completed attempting to define bytes as code. Now trying to define functions."
+		print ("[make_code_functions.py] Completed attempting to define bytes as code. Now trying to define functions.")
 		curr_addr = start_addr
 		while (curr_addr != BADADDR and curr_addr < end_addr):
 			if (ida_bytes.is_code(ida_bytes.get_full_flags(curr_addr)) and idc.get_func_attr(curr_addr, FUNCATTR_START) == BADADDR):
-					#print "Function Stuffs 0x%0x" % curr_addr
+					#print ("Function Stuffs 0x%0x" % curr_addr)
 					if(smart_prolog.match(idc.generate_disasm_line(curr_addr, 0)) or smart_epilog.match(idc.generate_disasm_line(idc.prev_head(curr_addr), 0))):
 						#generate_disasm has a force parameter but we are not using it for now
-						#print "Smart Prolog match"
+						#print ("Smart Prolog match")
 						if (ida_funcs.add_func(curr_addr) != 0):	
 							# MakeFunction(curr_addr) was successful so set curr_addr to next addr after the new function
 							curr_addr = idc.get_func_attr(curr_addr, FUNCATTR_END)	# Returns first address AFTER the end of the function
 							continue
 			curr_addr = idc.next_head(curr_addr)
 else:
-	print "[make_code_functions.py] Quitting. Entered address values are not valid."
+	print ("[make_code_functions.py] Quitting. Entered address values are not valid.")
 	
 		
 
