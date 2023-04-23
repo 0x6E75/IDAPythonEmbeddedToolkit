@@ -40,7 +40,7 @@ end_addr = ida_kernwin.ask_addr(ida_ida.inf_get_max_ea(), "Please enter the endi
 
 if ((start_addr is not None and end_addr is not None) and (start_addr != BADADDR and end_addr != BADADDR) and start_addr < end_addr):
 	string_start = start_addr
-	print "[make_strings.py] STARTING. Attempting to make strings with a minimum length of %d on data in range 0x%x to 0x%x" % (min_length, start_addr, end_addr)
+	print ("[make_strings.py] STARTING. Attempting to make strings with a minimum length of %d on data in range 0x%x to 0x%x" % (min_length, start_addr, end_addr))
 	num_strings = 0
 	while string_start < end_addr:
 		num_chars = 0
@@ -54,17 +54,17 @@ if ((start_addr is not None and end_addr is not None) and (start_addr != BADADDR
 				if ((byte in string_end) and (num_chars >= min_length)):
 					ida_bytes.del_items(string_start, curr_addr - string_start, DELIT_SIMPLE)
 					if (ida_bytes.create_strlit(string_start, 0, ida_nalt.STRTYPE_TERMCHR) == 1): #get_inf_attr(INF_STRTYPE)
-						print "[make_strings.py] String created at 0x%x to 0x%x" % (string_start, curr_addr)
+						print ("[make_strings.py] String created at 0x%x to 0x%x" % (string_start, curr_addr))
 						num_strings += 1
 						string_start = curr_addr
 						break
 					else:
-						#print "[make_strings.py] String create FAILED at 0x%x to 0x%x" % (string_start, curr_addr)
+						#print ("[make_strings.py] String create FAILED at 0x%x to 0x%x" % (string_start, curr_addr))
 						break
 				else:		
 					# String does not end with one of the defined "ending characters", does not meet the minimum string length, or is not an ASCII character
 					break
 		string_start += 1
-	print "[make_strings.py] FINISHED. Created %d strings in range 0x%x to 0x%x" % (num_strings, start_addr, end_addr)
+	print ("[make_strings.py] FINISHED. Created %d strings in range 0x%x to 0x%x" % (num_strings, start_addr, end_addr))
 else:
-	print "[make_strings.py] QUITTING. Entered address values not valid."
+	print ("[make_strings.py] QUITTING. Entered address values not valid.")
